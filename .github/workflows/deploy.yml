@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+# Один статический index.html в корне — деплоим как есть, без сборки.
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+# Права, которые нужны официальному Pages-деплою.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Не отменяем уже идущий деплой — пусть допишется.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Весь корень репозитория — Pages отдаст index.html по адресу сайта.
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
