@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>RelationOps™ — Tbilisi Edition</title>
 <meta name="description" content="Сатирическая админ-панель «для управления претендентами». Фикшен. Никем не управляйте." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237C3AED'/><stop offset='1' stop-color='%23EC4899'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>R</text></svg>" />
+<link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237C3AED'/><stop offset='1' stop-color='%23EC4899'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>R</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -338,8 +338,83 @@ button{font-family:inherit}
 /* sidebar overlay (mobile) */
 .scrim{display:none;position:fixed;inset:63px 0 0 0;background:rgba(0,0,0,.5);z-index:30}
 
+/* ============================ ТЕРМИНАЛ ============================ */
+.term{background:#07040D;border:1px solid var(--stroke);border-radius:14px;overflow:hidden;
+  font-family:var(--mono);font-size:13px;box-shadow:0 24px 60px -30px rgba(124,58,237,.6);transition:border-color .2s}
+.term:focus-within{border-color:rgba(124,58,237,.55)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:rgba(168,149,201,.07);border-bottom:1px solid var(--stroke)}
+.term-bar i{width:11px;height:11px;border-radius:50%;display:block;flex-shrink:0}
+.term-bar .tt{margin-left:8px;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.term-body{height:min(62vh,560px);overflow:auto;padding:12px 14px;cursor:text}
+.term-out .ln{white-space:pre-wrap;word-break:break-word;line-height:1.55}
+.term-out .ln.pre{white-space:pre;word-break:normal;overflow-x:auto}
+.term .pr{color:var(--ok)}
+.term .pr .path{color:var(--accent)}
+.term-in{display:flex;gap:8px;align-items:baseline;line-height:1.55}
+.term-in .pr{flex-shrink:0}
+.term-in input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--text);
+  font:inherit;caret-color:var(--grad-b);padding:0;margin:0}
+.term-in input:focus-visible{outline:none}
+.t-err{color:var(--danger)} .t-ok{color:var(--ok)} .t-warn{color:var(--warn)}
+.t-dim{color:var(--muted)} .t-acc{color:var(--accent)}
+.t-grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.term-hints{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.term-hints .chip{cursor:pointer;font-size:11.5px}
+.term-hints .chip:hover{color:var(--text);border-color:rgba(124,58,237,.5)}
+
+/* ============================ РЕВЬЮ (PR) ============================ */
+.review-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
+.deck-wrap{padding:6px 10px 4px;overflow:hidden}
+@supports (overflow:clip){.deck-wrap{overflow-x:clip;overflow-y:visible}}
+.deck{display:grid;max-width:560px;margin:0 auto}
+.prc{grid-area:1/1;display:flex;flex-direction:column;gap:11px;background:var(--bg-1);
+  user-select:none;-webkit-user-select:none;touch-action:pan-y;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.prc.top{z-index:3;cursor:grab}
+.prc.top:active{cursor:grabbing}
+.prc.n1{z-index:2;transform:translateY(12px) scale(.96);opacity:.75;pointer-events:none}
+.prc.n2{z-index:1;transform:translateY(24px) scale(.92);opacity:.4;pointer-events:none}
+.prc.n1.promote{transform:none;opacity:1}
+.reduce .prc{transition:none}
+.pr-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pr-num{color:var(--muted);font-size:13px}
+.pr-title{font-family:var(--display);font-weight:600;font-size:18px;line-height:1.25}
+.pr-meta{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--muted)}
+.pr-meta b{color:var(--text);font-weight:500}
+.pr-meta code{font-family:var(--mono);font-size:11.5px;color:var(--accent);background:rgba(34,211,238,.08);
+  padding:1px 6px;border-radius:6px;word-break:break-all}
+.diff{border:1px solid var(--stroke);border-radius:10px;overflow:hidden;font-family:var(--mono);font-size:12.5px}
+.diff-h{display:flex;justify-content:space-between;padding:6px 10px;background:rgba(168,149,201,.08);
+  border-bottom:1px solid var(--stroke);color:var(--muted);font-size:11.5px}
+.diff-h .a{color:var(--ok)} .diff-h .d{color:var(--danger)}
+.dl{display:flex;gap:8px;padding:3px 10px;line-height:1.5}
+.dl .sg{width:10px;flex-shrink:0;opacity:.8}
+.dl.add{background:rgba(163,230,53,.09);color:#D9F99D}
+.dl.del{background:rgba(244,63,94,.09);color:#FECDD3}
+.checks{border:1px solid var(--stroke);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:5px}
+.ck-sum{font-size:12.5px;font-weight:600;padding-bottom:5px;border-bottom:1px dashed var(--stroke);margin-bottom:2px}
+.ck{display:flex;gap:8px;align-items:baseline;font-size:12px}
+.ck .ci{width:14px;flex-shrink:0;text-align:center;font-weight:700}
+.ck .cn{font-family:var(--mono);flex-shrink:0}
+.ck .cd{color:var(--muted)}
+.s-pass{color:var(--ok)} .s-fail{color:var(--danger)} .s-warn{color:var(--warn)}
+.s-run{color:var(--warn);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+.stamp{position:absolute;top:22px;z-index:5;font-family:var(--display);font-weight:700;font-size:22px;
+  letter-spacing:.04em;padding:4px 12px;border:3px solid;border-radius:10px;opacity:0;pointer-events:none;
+  text-align:center;line-height:1.1;background:rgba(11,6,20,.75)}
+.stamp.ok{left:18px;color:var(--ok);transform:rotate(-12deg)}
+.stamp.no{right:18px;color:var(--danger);transform:rotate(12deg)}
+.stamp.dup{left:50%;top:40%;color:var(--muted);transform:translateX(-50%) rotate(-4deg)}
+.deck-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.deck-actions .btn{padding:10px 16px}
+.deck-empty{text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;padding:34px 18px}
+.deck-empty .big-ic{font-size:40px}
+.pr-log{display:flex;flex-direction:column;gap:6px;max-height:520px;overflow:auto;margin-top:8px}
+
 /* ============================ RESPONSIVE ============================ */
-@media (max-width:1100px){.cols-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1180px){.topbar-badges{display:none}} /* иначе шапка вылезает за экран при длинном «powered by» */
+@media (max-width:1100px){.cols-4{grid-template-columns:repeat(2,1fr)} .review-grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:920px){
   .app{grid-template-columns:1fr}
   .burger{display:block}
@@ -354,9 +429,20 @@ button{font-family:inherit}
 @media (max-width:680px){
   .cols-4,.cols-3,.cols-2{grid-template-columns:1fr}
   .powered,.topbar-badges{display:none}
+  .topbar{gap:10px;padding:12px} /* высота 63px — на неё завязан sidebar */
   .content{padding:16px 14px 50px}
   h1{font-size:25px}
   .doom{font-size:11px;padding:5px 9px}
+  .term{font-size:12px}
+  .term-body{height:56vh;padding:10px}
+  .term-in input{font-size:16px} /* без автозума в iOS */
+  .term .pr-full{display:none}
+  .deck-wrap{padding:4px 2px}
+  .pr-title{font-size:16.5px}
+  .deck-actions .btn{padding:9px 12px;font-size:12.5px}
+}
+@media (max-width:440px){
+  .logo{display:none} /* на телефоне остаётся только значок «R» */
 }
 @media (max-width:380px){
   .doom .label-txt{display:none}
@@ -399,11 +485,13 @@ button{font-family:inherit}
   <nav class="sidebar" id="sidebar" aria-label="Навигация">
     <button class="nav-item active" data-tab="dashboard"><span class="ic">📊</span> Дашборд</button>
     <button class="nav-item" data-tab="candidates"><span class="ic">🧑‍💻</span> Претенденты <span class="badge-dot" id="navCand">0</span></button>
+    <button class="nav-item" data-tab="review"><span class="ic">🔀</span> Ревью <span class="badge-dot" id="navPr">0</span></button>
     <button class="nav-item" data-tab="advisories"><span class="ic">🛡️</span> Advisories <span class="badge-dot" id="navAdv">0</span></button>
     <button class="nav-item" data-tab="infra"><span class="ic">🍸</span> Инфра</button>
     <button class="nav-item" data-tab="tickets"><span class="ic">🎫</span> Тикеты</button>
     <button class="nav-item" data-tab="threads"><span class="ic">🧵</span> Тред-лента</button>
     <button class="nav-item" data-tab="polycule"><span class="ic">🕸️</span> Поликюль</button>
+    <button class="nav-item" data-tab="terminal"><span class="ic">💻</span> Терминал</button>
     <button class="nav-item" data-tab="settings"><span class="ic">⚙️</span> Настройки</button>
     <div class="side-foot">
       <div>Сатира. Все совпадения случайны.<br>Никем не управляйте.</div>
@@ -416,11 +504,13 @@ button{font-family:inherit}
   <main class="content" id="content">
     <section class="tab active" id="tab-dashboard" tabindex="-1"></section>
     <section class="tab" id="tab-candidates" tabindex="-1"></section>
+    <section class="tab" id="tab-review" tabindex="-1"></section>
     <section class="tab" id="tab-advisories" tabindex="-1"></section>
     <section class="tab" id="tab-infra" tabindex="-1"></section>
     <section class="tab" id="tab-tickets" tabindex="-1"></section>
     <section class="tab" id="tab-threads" tabindex="-1"></section>
     <section class="tab" id="tab-polycule" tabindex="-1"></section>
+    <section class="tab" id="tab-terminal" tabindex="-1"></section>
     <section class="tab" id="tab-settings" tabindex="-1"></section>
   </main>
 
@@ -539,7 +629,91 @@ const DATA = {
     {nm:"Сололаки",d:"высокая"},{nm:"спешелти-кофейни",d:"аномальная"},{nm:"Мтацминда",d:"низкая"}
   ],
   poweredVictims:["PolyamoryOS","ChurnLabs","NotionGrave","GhostingAsAService","BurnRateAI",
-    "VisaRunner","SituationshipQL","DumplingDAO","FailoverDating","SeedRoundSorrow"]
+    "VisaRunner","SituationshipQL","DumplingDAO","FailoverDating","SeedRoundSorrow"],
+
+  /* ---- ревью: претенденты как pull request'ы ---- */
+  prTitles:["feat: добавить себя в твою жизнь","fix: извиниться за вчерашнее (частично)",
+    "refactor: сменил стартап, личность та же","chore: обновил фото в профиле (снято в 2019)",
+    "feat!: предложил съехаться (BREAKING CHANGE)","perf: отвечает быстрее (только в рабочее время)",
+    "docs: рассказал о себе за 40 минут","revert: «я тебя люблю»","feat: позвал на натурвайн-вечер",
+    "fix: перестал говорить про крипту (до 22:00)","wip: чувства","ci: подключил к своей маме",
+    "feat: принёс чурчхелу на первое свидание"],
+  prFixTitles:["fix: учёл замечания (нет)","fix: теперь пишет «сейчас» (иногда)",
+    "chore: убрал крипту из био, оставил в душе","fix: извинился ещё раз, теперь с эмодзи",
+    "refactor: всё то же самое, но в другой рубашке"],
+  prBranches:["feature/serious-relationship","hotfix/sorry-v3","situationship/main","experiment/polyamory",
+    "relocate/lisbon-prep","feature/meet-friends","wip/just-coffee","fix/ghosting-regression"],
+  prLabels:[{t:"good first date",k:"ok"},{t:"needs-therapy",k:"warn"},{t:"wontfix",k:"neutral"},
+    {t:"breaking",k:"danger"},{t:"help wanted (с переездом)",k:"accent"},{t:"stale",k:"neutral"},
+    {t:"red flag",k:"danger"}],
+  bioDiffs:[
+    {del:"ищу серьёзные отношения",add:"не ищу ничего серьёзного (пока)"},
+    {del:"женат",add:"«это сложно»"},
+    {del:"работаю в бигтехе",add:"фаундер (pre-seed, 0 юзеров)"},
+    {del:"рост 180",add:"рост 180 (в кроссовках)"},
+    {del:"живу в Тбилиси",add:"живу в Тбилиси (до визарана)"},
+    {del:"не пью",add:"только натурвайн (он живой)"},
+    {del:"люблю путешествовать",add:"люблю визараны"},
+    {del:"открыт к новому",add:"открыт к полиамории"},
+    {del:"32 года",add:"29 лет (в душе)"},
+    {del:"без вредных привычек",add:"без вредных привычек (крипта не считается)"},
+    {del:null,add:"ищу технического кофаундера"},
+    {del:"фото 2024",add:"фото 2019"},
+    {del:"с чувством юмора",add:"с чувством юмора (мемы только на английском)"},
+    {del:"готов к переезду",add:"готов к переезду (уже гуглит Лиссабон)"}
+  ],
+  prChecks:[
+    {s:"fail",n:"lint",d:"пишет «щас» и «чё»"},
+    {s:"run",n:"ex-check",d:"проверка на бывшую (running 4 года)"},
+    {s:"pass",n:"build",d:"passing (ходит в зал)"},
+    {s:"fail",n:"has-job",d:"между работами с 2021"},
+    {s:"pass",n:"marital-status",d:"не женат (по его словам)"},
+    {s:"run",n:"vibe-check",d:"queued, перед ним 14 других"},
+    {s:"fail",n:"test-coverage",d:"0%: с друзьями не знакомил"},
+    {s:"fail",n:"typecheck",d:"тип «серьёзный» не совпадает с поведением"},
+    {s:"pass",n:"has-car",d:"есть машина (Prius, в кредит)"}
+  ],
+  prReviewers:[{n:"@лучшая_подруга",v:"requested changes"},{n:"@мама",v:"approved (ей все нравятся)"},
+    {n:"@бывший_всех",v:"«я его знаю»"},{n:"@кошка_из_коливинга",v:"approved 🐈"},
+    {n:"@таролог",v:"blocked: ретроградный Меркурий"},{n:"@бариста",v:"«берёт раф на овсяном»"},
+    {n:"@психотерапевт",v:"«а что вы при этом чувствуете?»"}],
+  reviewComments:["nit: «щас» → «сейчас»","Разбей 9-минутное голосовое на несколько PR, пожалуйста.",
+    "Где тесты? (с друзьями не знакомил)","LGTM, но нет.","Убери крипту из первого сообщения.",
+    "Rebase на актуальное семейное положение, пожалуйста.","Слишком большой PR. Начни с «просто кофе».",
+    "Конфликт с main: у main кошка, у тебя аллергия.","Нужен changelog: куда делась предыдущая?"],
+  mergeOutcomes:[
+    {k:"danger",conflict:true,t:"Merge conflict",b:"CONFLICT в feelings.md: бывшая всё ещё в main.",log:"merge conflict с бывшей"},
+    {k:"ok",merged:true,t:"Merged 🎉",b:"Смёржено в main. Revert запланирован на после визарана.",log:"смёржен в main (revert запланирован)"},
+    {k:"warn",t:"Merge blocked",b:"Нужно 2 аппрува. Есть только мамин.",log:"merge blocked: только мамин аппрув"},
+    {k:"ok",merged:true,t:"Merged",b:"CI упал через три свидания. Хотфикс: «давай останемся друзьями».",log:"смёржен, CI упал на третьем свидании"},
+    {k:"warn",t:"Merge queue",b:"Поставлен в merge queue. Перед ним 14 претендентов.",log:"в merge queue, позиция 15"},
+    {k:"danger",conflict:true,t:"Merge conflict",b:"CONFLICT в weekends.md: у него визаран, у тебя день рождения.",log:"conflict в weekends.md"}
+  ],
+  dupReasons:["Такой уже был. Даже стартап тот же.","Тот же натурвайн, те же разговоры про DAO.",
+    "Тот же визаран, другая маршрутка.","Совпадает с предыдущим на 98%. Отличие — цвет худи."],
+
+  /* ---- терминал ---- */
+  termEvents:[
+    {t:"Warning",r:"Ghosting",m:"прочитал, не ответил"},
+    {t:"Normal",r:"Typing",m:"печатает… (уже 14 минут)"},
+    {t:"Warning",r:"Relocation",m:"гуглил «зимы в Лиссабоне»"},
+    {t:"Normal",r:"StoryView",m:"посмотрел сторис первым, как всегда"},
+    {t:"Warning",r:"Crypto",m:"снова начал про альты"},
+    {t:"Normal",r:"Pivot",m:"стартап сменил направление (5-й раз)"},
+    {t:"Warning",r:"VoiceMsg",m:"голосовое 9:41, не прослушано"},
+    {t:"Normal",r:"Probe",m:"«просто хотел узнать как ты»"}
+  ],
+  termLogs:[
+    {lv:"[info]",m:"печатает…"},{lv:"[info]",m:"«ты спишь?»"},{lv:"[warn]",m:"сообщение удалено"},
+    {lv:"[info]",m:"лайкнул сторис 2019 года"},{lv:"[error]",m:"голосовое 9:41 — «отправилось случайно»"},
+    {lv:"[info]",m:"«просто хотел узнать как ты»"},{lv:"[warn]",m:"был в сети 4 минуты, ничего не написал"},
+    {lv:"[debug]",m:"открыл твой профиль 7 раз"},{lv:"[error]",m:"«ну так что по альтам»"},
+    {lv:"[info]",m:"поставил ❤ на твой тред про границы"},{lv:"[warn]",m:"скинул роадмеп вместо планов на выходные"},
+    {lv:"[debug]",m:"гуглил «как понять, что она не заинтересована»"}
+  ],
+  gitLog:["revert: «я тебя люблю»","fix: извинился (не помогло)","wip: чувства","chore: удалил её из близких друзей",
+    "feat: снова добавил в близкие друзья","refactor: та же личность, новый стартап","docs: тред про границы",
+    "fix: границы (hotfix в 2 ночи)","perf: отвечать быстрее (откачено)","chore(deps): bump натурвайн 2023 → 2024"]
 };
 
 /* ============================================================
@@ -616,6 +790,8 @@ const state = {
   candidates:[], advisories:[], tickets:[], threads:[], alerts:[],
   poly:{nodes:[],edges:[]},
   flags:{hands:true,jealousy:false,stories:true,serious:false}, canary:5,
+  prs:[], prLog:[], prSeq:100+rnd(60), prBusy:false,
+  prStats:{merged:0,changes:0,conflict:0,dup:0},
   activeTab:"dashboard"
 };
 
@@ -813,7 +989,7 @@ function candCard(c){
       <div class="avatar" style="background:${avatarGrad(c.nick.length)}">${initials(c.nick)}</div>
       <div class="meta" style="flex:1">
         <div class="nick">${esc(c.nick)}</div>
-        <div class="grade">${esc(c.grade)}</div>
+        <div class="grade">${esc(c.grade)}${c.merged?' · <span style="color:var(--ok)">merged ✓</span>':''}</div>
       </div>
       <span class="score" style="color:${c.score>66?'var(--ok)':c.score>33?'var(--warn)':'var(--danger)'}">${c.score}</span>
     </div>
@@ -1217,6 +1393,657 @@ function renderSettings(){
 }
 
 /* ============================================================
+   §6.9  ТЕРМИНАЛ — relctl
+   ============================================================ */
+const coarsePointer = matchMedia("(pointer: coarse)").matches;
+const term = {lines:[], history:[], hIdx:0, booted:false};
+const PROMPT_HTML = `<span class="pr"><span class="pr-full">admin_она_решает@tbilisi-1</span>:<span class="path">~</span>$</span>`;
+const pad = (s,n)=>{ s=String(s); return s.length>n ? s.slice(0,n-1)+"…" : s.padEnd(n); };
+const plural = (n,one,few,many)=>{ const a=n%10,b=n%100; return a===1&&b!==11?one : a>=2&&a<=4&&(b<10||b>=20)?few : many; };
+const liveCands = () => state.candidates.filter(c=>!c.blocked);
+const findCand = q => { if(!q) return null; const n=(q.startsWith("@")?q:"@"+q).toLowerCase(); return state.candidates.find(c=>c.nick.toLowerCase()===n); };
+const candStatus = c => c.blocked?"Terminated":c.shadow?"Shadowbanned":c.merged?"Merged":"Running";
+const FILES=["feelings.md","boundaries.txt",".env",".bash_history","relocate_to_lisbon.sh","startup_ideas","ex"];
+const RELCTL_SUBS=["get","describe","logs","delete","rollback","scale","apply","version","help"];
+const GIT_SUBS=["status","log","blame","push","pull","commit","merge","checkout","stash","reset","rebase"];
+const RESOURCES=["candidates","advisories","tickets","nodes","pods","feelings"];
+const TERM_HINTS=["help","relctl get candidates","relctl get candidates --field-selector=married=false",
+  "relctl logs --since=02:00","sudo love","git status","ping lisbon","neofetch","make love","cat .env"];
+
+/* вывод */
+const lineHTML = l => `<div class="ln ${l.cls||""}">${l.html}</div>`;
+function termAppend(entry){
+  term.lines.push(entry);
+  if(term.lines.length>400) term.lines.shift();
+  const out=$("#termOut"); if(out) out.insertAdjacentHTML("beforeend",lineHTML(entry));
+}
+function say(text,cls=""){ termAppend({cls, html:esc(text===""?" ":text)}); }
+function sayPre(text,cls=""){ termAppend({cls:"pre "+cls, html:esc(text)}); }
+function termScroll(){ const b=$("#termBody"); if(b) b.scrollTop=b.scrollHeight; }
+function termClear(){ term.lines=[]; const out=$("#termOut"); if(out) out.innerHTML=""; }
+
+/* relctl */
+function relctlHelp(){
+  sayPre(`relctl — управляй тем, чем управлять не надо.
+
+Usage:
+  relctl get candidates|advisories|tickets|nodes   список ресурсов
+  relctl describe @nick                            карточка претендента
+  relctl logs @nick [--since=02:00]                ночные логи
+  relctl delete candidate @nick                    забанить (их и так мало)
+  relctl rollback ex                               откатиться к бывшему
+  relctl scale candidates --replicas=N             масштабирование
+  relctl apply -f feelings.yaml                    применить чувства
+  relctl version`);
+}
+function relctlGet(args){
+  const res=(args[0]||"").toLowerCase(), flags=args.slice(1).join(" ");
+  if(!res){ say("error: you must specify the type of resource to get. Попробуй: relctl get candidates","t-err"); return; }
+  if(/^(candidates?|cand|претенденты)$/.test(res)){
+    if(/(married|женат)=false/i.test(flags)){ say("No resources found in namespace tbilisi.","t-warn"); return; }
+    const rows=state.candidates.map(c=>`${pad(c.nick,22)} ${pad(c.grade,11)} ${pad(c.score,6)} ${pad(candStatus(c),13)} ${c.reloc.city} ${c.reloc.pct}%`);
+    sayPre(`${pad("NAME",22)} ${pad("GRADE",11)} ${pad("SCORE",6)} ${pad("STATUS",13)} RELOC-RISK\n`+rows.join("\n"));
+    say(/(married|женат)=true/i.test(flags)
+      ? "совпадение по married=true: 100%. вопросов больше нет."
+      : `${liveCands().length} в орбите · namespace: tbilisi · подсказка: --field-selector=married=false`,"t-dim");
+    return;
+  }
+  if(/^(advisories|adv|cve|vulns?)$/.test(res)){
+    sayPre(`${pad("ID",16)} ${pad("SEVERITY",10)} ${pad("STATUS",10)} TITLE\n`+
+      state.advisories.map(a=>`${pad(a.id,16)} ${pad(a.sev,10)} ${pad(a.status,10)} ${a.title}`).join("\n"));
+    return;
+  }
+  if(/^(tickets?|tk|jira)$/.test(res)){
+    sayPre(`${pad("ID",9)} ${pad("PRIO",5)} ${pad("STATUS",15)} TITLE\n`+
+      state.tickets.map(t=>`${pad(t.id,9)} ${pad("P"+t.prio,5)} ${pad(t.status,15)} ${t.ti}`).join("\n"));
+    return;
+  }
+  if(/^(nodes?|no|bars?|бары)$/.test(res)){
+    DATA.bars.forEach(b=>{ if(!nodeHealth[b.nm]) nodeHealth[b.nm]=sample(DATA.barHealth); });
+    sayPre(`${pad("NAME",15)} ${pad("STATUS",24)} ROLE\n`+
+      DATA.bars.map(b=>`${pad(b.nm,15)} ${pad(nodeHealth[b.nm],24)} ${b.desc.split(/[;:]/)[0]}`).join("\n"));
+    return;
+  }
+  if(/^(pods?|po|хинкали)$/.test(res)){
+    sayPre(`NAME              READY   STATUS    RESTARTS
+khinkali-7f9c-1   1/1     Eaten     0
+khinkali-7f9c-2   1/1     Eaten     0
+khinkali-7f9c-3   0/1     Pending   4    (хвостик оставлен как техдолг)
+khinkali-7f9c-4   1/1     Eaten     0`);
+    return;
+  }
+  say(`error: the server doesn't have a resource type "${res}"`,"t-err");
+  if(/^(feelings?|чувства|love|любовь)$/.test(res)) say("подсказка: попробуй relctl get candidates — там тоже нет, но хоть таблица","t-dim");
+}
+const nickArg = args => args.filter(a=>!/^(candidates?|cand|c)$/i.test(a) && !a.startsWith("-"))[0];
+function relctlDescribe(args){
+  const q=nickArg(args);
+  if(!q){ say("error: укажи претендента: relctl describe @nick (Tab дополняет ники)","t-err"); return; }
+  const c=findCand(q);
+  if(!c){ say(`Error from server (NotFound): candidates "${q}" not found (возможно, уже в Лиссабоне)`,"t-err"); return; }
+  const ev=sampleMany(DATA.termEvents,3);
+  sayPre(`Name:         ${c.nick}
+Namespace:    tbilisi
+Status:       ${candStatus(c)}
+Grade:        ${c.grade}
+Lead score:   ${c.score}
+Uptime:       ${c.uptime}
+Startup:      ${c.startup.nm} (${c.startup.st}), last commit ${c.startup.commit} дн. назад
+Reloc risk:   ${c.reloc.city} ${c.reloc.pct}%
+RBAC:         ${c.rbac.role} — ${c.rbac.note}
+Labels:       ${c.tags.join(", ")}
+Vulns:        ${c.vuln.n} known, ${c.vuln.un} unpatched
+Events:
+  ${pad("Type",8)} ${pad("Reason",11)} ${pad("Age",4)} Message
+${ev.map(e=>`  ${pad(e.t,8)} ${pad(e.r,11)} ${pad((1+rnd(23))+(Math.random()<.5?"h":"m"),4)} ${e.m}`).join("\n")}`);
+}
+function relctlLogs(args){
+  const q=nickArg(args);
+  const c=q?findCand(q):sample(liveCands().length?liveCands():state.candidates);
+  if(q&&!c){ say(`Error from server (NotFound): candidates "${q}" not found`,"t-err"); return; }
+  if(c.blocked){ say(`${c.nick}: pod terminated, логи недоступны. Но ты всё равно проверяешь, да?`,"t-warn"); return; }
+  const since=((args.find(a=>a.startsWith("--since="))||"").split("=")[1])||"02:00";
+  let [h,m]=since.split(":").map(Number); if(!(h>=0&&h<24)) h=2; if(!(m>=0&&m<60)) m=0;
+  let t=h*60+m;
+  say(`logs ${c.nick} --since=${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`,"t-dim");
+  sampleMany(DATA.termLogs,5+rnd(2)).forEach(l=>{
+    t+=1+rnd(25);
+    const hh=String(Math.floor(t/60)%24).padStart(2,"0"), mm=String(t%60).padStart(2,"0");
+    say(`${hh}:${mm}  ${pad(l.lv,7)}  ${l.m}`, l.lv==="[error]"?"t-err":l.lv==="[warn]"?"t-warn":l.lv==="[debug]"?"t-dim":"");
+  });
+}
+function relctlDelete(args){
+  const q=nickArg(args);
+  if(!q){ say("error: укажи, кого удалить: relctl delete candidate @nick","t-err"); return; }
+  if(/^(feelings?|чувства)$/i.test(q)){ say("Error from server (Forbidden): feelings is immutable. Попробуй время.","t-err"); return; }
+  if(/^(ex|бывш)/i.test(q)){ say("Error from server (Conflict): ex всё ещё в близких друзьях. Сначала удали оттуда.","t-err"); return; }
+  const c=findCand(q);
+  if(!c){ say(`Error from server (NotFound): candidates "${q}" not found`,"t-err"); return; }
+  if(c.blocked){ say(`candidate "${c.nick}" уже terminated. Воскресить можно во вкладке «Претенденты».`,"t-warn"); return; }
+  c.blocked=true; state.orbit=Math.max(0,state.orbit-1); state.banned++;
+  say(`candidate "${c.nick}" deleted`,"t-ok");
+  say("их и так мало.","t-dim");
+  pushAlert(`relctl: ${c.nick} удалён из терминала`,"danger");
+  refreshNavCounts(); syncCounters();
+}
+function relctlRollback(args){
+  say(`rolling back to "${args[0]||"ex"}"…`,"t-dim");
+  say("error: backup corrupted (она удалила переписку)","t-err");
+  say("некоторые вещи не откатываются. это фича.","t-dim");
+}
+function relctlScale(args){
+  const r=(args.join(" ").match(/--replicas=(\d+)/)||[])[1];
+  if(r===undefined){ say('error: required flag(s) "replicas" not set',"t-err"); return; }
+  say(`Warning: профицит не масштабируется. desired: ${r}, actual: М 312 / Ж 47`,"t-warn");
+  say(+r===0?"replicas=0: одиночество — тоже deployment. но не сегодня.":"scale request queued. ETA: следующий визаран.","t-dim");
+}
+function relctlApply(args){
+  const i=args.indexOf("-f"), f=i>=0?args[i+1]:args[0];
+  if(!f){ say("error: must specify one of -f and -k","t-err"); return; }
+  say(`error: error validating "${f}": spec.commitment: Required value`,"t-err");
+  say('error: spec.communication: Invalid value: "голосовые по 9 минут"',"t-err");
+}
+function relctl(args){
+  const sub=(args[0]||"").toLowerCase(), rest=args.slice(1);
+  if(!sub||sub==="help"||sub==="--help"||sub==="-h") return relctlHelp();
+  const map={get:relctlGet,describe:relctlDescribe,logs:relctlLogs,log:relctlLogs,delete:relctlDelete,
+    rollback:relctlRollback,scale:relctlScale,apply:relctlApply,
+    version:()=>sayPre(`Client Version: v0.1.0-doomed\nServer Version: v0.1.0-doomed (заброшен через ${$("#doomVal").textContent})`),
+    top:()=>CMDS.top()};
+  if(map[sub]) return map[sub](rest);
+  say(`error: unknown command "${args[0]}" for "relctl"`,"t-err");
+  say("Run 'relctl help' for usage.","t-dim");
+}
+
+/* git */
+function git(args){
+  const sub=(args[0]||"").toLowerCase(), rest=args.slice(1).join(" ");
+  const hex=()=>Array.from({length:7},()=>"0123456789abcdef"[rnd(16)]).join("");
+  switch(sub){
+    case "status": sayPre(`On branch situationship
+Your branch is behind 'origin/ex' by 3 commits.
+  (use "git pull" to repeat the same mistakes)
+
+Changes not staged for commit:
+        modified:   feelings.md
+        deleted:    boundaries.txt
+
+no changes added to commit (commitment issues)`); break;
+    case "log":
+      sampleMany(DATA.gitLog,6).forEach(m=>termAppend({cls:"",html:`<span class="t-warn">${hex()}</span> ${esc(m)}`})); break;
+    case "blame":
+      sayPre(`^c0ffee (культура  2022-03-01  1) всё\n^c0ffee (культура  2022-03-01  2) и остальное тоже`);
+      say("итого: виновата культура","t-warn"); break;
+    case "push":
+      if(/(^|\s)(-f|--force)/.test(rest)) say("remote: error: force-push в main запрещён правилами ветки (и здравым смыслом)","t-err");
+      else { say(" ! [rejected]  main -> main (она не готова к отношениям)","t-err"); say("hint: подожди, пока она сделает pull. или не жди.","t-dim"); }
+      break;
+    case "pull": say("Already up to date. (она всё ещё не ответила)","t-dim"); break;
+    case "commit": say("Aborting commit due to empty commit message.","t-err"); say("(ты так и не смог(ла) сформулировать, что это было)","t-dim"); break;
+    case "merge":
+      say("Auto-merging feelings.md"); say("CONFLICT (content): Merge conflict in feelings.md","t-err");
+      say("Automatic merge failed; fix conflicts and then talk about it.","t-dim"); break;
+    case "checkout": case "switch":
+      if(/ex|бывш/i.test(rest)) say("error: your local changes to 'feelings.md' would be overwritten by checkout.\nCommit or stash them before you go back to ex.","t-err");
+      else say(`error: pathspec '${rest||"…"}' did not match any situationship known to git`,"t-err");
+      break;
+    case "stash": say("Saved working directory and index state WIP on situationship: чувства спрятаны до лучших времён","t-ok");
+      say(`в stash уже ${14+rnd(20)} записей. ты туда никогда не заглядываешь.`,"t-dim"); break;
+    case "reset": say("HEAD is now at 0000000 до знакомства","t-ok"); say("воспоминания не удалены: они в reflog. навсегда.","t-dim"); break;
+    case "rebase": say("error: cannot rebase: у тебя незакрытые отношения в рабочей директории","t-err"); break;
+    case "": case "help": case "--help": say("usage: git status | log | blame | push | pull | commit | merge | checkout | stash | reset","t-dim"); break;
+    default: say(`git: '${args[0]}' is not a git command. See 'git --help'.`,"t-err");
+  }
+}
+
+/* остальные команды. Object.create(null) — чтобы «constructor» не считался командой */
+const CMDS = Object.assign(Object.create(null),{
+  help(){
+    sayPre(`Доступные команды:
+  relctl …             основной CLI (relctl help)
+  git …                status, log, blame, push, merge, commit, stash, reset
+  ls, cat, cd, rm      файловая система чувств
+  ping <host>          проверить связь (ping lisbon, ping @nick)
+  top, uptime, whoami, neofetch, date, history, clear
+  sudo …               попробуй
+
+Есть и недокументированные команды. Ищи.`);
+  },
+  relctl, git,
+  kubectl(args){ say("kubectl? у нас свой велосипед. перенаправляю в relctl…","t-dim"); relctl(args); },
+  clear: termClear,
+  sudo(args){
+    if(!args.length){ say("usage: sudo <чувство>","t-dim"); return; }
+    say("[sudo] password for admin_она_решает: ********","t-dim");
+    say("admin_она_решает is not in the sudoers file. This incident will be reported.","t-err");
+    pushAlert(`sudo ${args.join(" ")}: попытка эскалации привилегий (зарепорчено)`,"danger");
+  },
+  ping(args){
+    const host=(args.find(a=>!a.startsWith("-"))||"").toLowerCase();
+    if(!host){ say("usage: ping <host> (например, ping lisbon)","t-dim"); return; }
+    if(host.startsWith("@")){
+      say(`PING ${host}: 56 data bytes`);
+      for(let i=0;i<3;i++) say(`Request timeout for icmp_seq ${i} (в прочитано)`,"t-warn");
+      say(`--- ${host} ping statistics ---\n3 packets transmitted, 0 received, 100% packet loss. он видел.`,"t-err");
+      return;
+    }
+    if(/^(tbilisi|тбилиси|localhost|127\.0\.0\.1)$/.test(host)){ say(`64 bytes from ${host}: ты уже здесь. все уже здесь. time=0 мс`,"t-ok"); return; }
+    say(`PING ${host}: 56 data bytes`);
+    if(/lisbon|лиссабон|bali|бали|yerevan|ереван|madeira|мадейр|belgrade|белград|porto|порту|dubai|дубай/.test(host)){
+      const units=["2 нед.","4 мес.","1 визаран","до весны","3 дня","после раунда"];
+      for(let i=0;i<4;i++){ const c=liveCands().length?sample(liveCands()):{nick:makeNick()}; say(`64 bytes from ${c.nick}: icmp_seq=${i} ttl=64 time=${sample(units)}`); }
+      say(`--- ${host} ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss. все хотят туда.`,"t-ok");
+    } else {
+      for(let i=0;i<2;i++) say(`Request timeout for icmp_seq ${i}`,"t-warn");
+      say(`--- ${host} ping statistics ---\n2 packets transmitted, 0 received. туда никто не релоцируется.`,"t-dim");
+    }
+  },
+  ls(args){
+    const all=args.some(a=>/^-\w*a/.test(a));
+    sayPre(`drwx------  ex/                       permission denied
+drwxr-xr-x  startup_ideas/            127 идей, все про коливинг
+-rw-r--r--  feelings.md               4 B
+-rw-r--r--  boundaries.txt            0 B
+-rwxr-xr-x  relocate_to_lisbon.sh     1.2 KB`+(all?`
+-rw-------  .env                      лучше не трогать
+-rw-r--r--  .bash_history             «ты спишь?» ×214`:""));
+    if(!all) say("есть скрытые файлы (ls -a)","t-dim");
+  },
+  cat(args){
+    const f=args[0];
+    if(!f){ say("cat: что читать-то? (Tab дополняет имена файлов)","t-dim"); return; }
+    const k=f.replace(/^\.\//,"").replace(/\/$/,"");
+    const files={
+      "feelings.md":"TODO",
+      "boundaries.txt":null,
+      ".env":()=>`LOVE=undefined\nTRUST=\nEX_API_KEY=**************** (не трогай)\nDRAMA_LEVEL=${state.drama}\nRELOCATE_IF=winter`,
+      ".bash_history":"ты спишь?\nты спишь?\nне спишь же, вижу что онлайн\nладно\nты спишь?",
+      "relocate_to_lisbon.sh":`#!/bin/bash\n# запускать только после третьего визарана\nwhile true; do\n  google "лиссабон аренда"\n  sleep 86400\ndone`
+    };
+    if(k==="ex"){ say("cat: ex: Permission denied","t-err"); return; }
+    if(k==="startup_ideas"){ say("cat: startup_ideas: Is a directory (и все 127 — про коливинг)","t-err"); return; }
+    if(!(k in files)){ say(`cat: ${f}: No such file or directory`,"t-err"); return; }
+    const v=typeof files[k]==="function"?files[k]():files[k];
+    if(v===null) say("(файл пуст. как и было обещано.)","t-dim"); else sayPre(v);
+  },
+  cd(args){
+    const d=(args[0]||"~").replace(/\/$/,"");
+    if(["~","..",".","/",""].includes(d)) return;
+    if(d==="ex"){ say("bash: cd: ex: Permission denied","t-err"); say("и это к лучшему.","t-dim"); return; }
+    if(d==="startup_ideas"){ say("ты уже заходил(а) туда 127 раз. все идеи — коливинг.","t-warn"); return; }
+    say(`bash: cd: ${d}: No such file or directory`+(/lisbon|лиссабон|bali|бали/i.test(d)?" (пока)":""),"t-err");
+  },
+  rm(args){
+    const tgt=args.filter(a=>!a.startsWith("-")).join(" ");
+    if(!tgt){ say("rm: missing operand","t-err"); return; }
+    if(["/","/*","~","*"].includes(tgt)){ say("rm: nice try. Тбилиси не удаляется, он только расширяется.","t-err"); return; }
+    if(/feel|чувств/i.test(tgt)){ say(`rm: cannot remove '${tgt}': Read-only file system`,"t-err"); return; }
+    if(/^ex|бывш/i.test(tgt)){ say(`rm: cannot remove '${tgt}': Device or resource busy (ещё не отпустило)`,"t-err"); return; }
+    if(/boundar|границ/i.test(tgt)){ say(`rm: '${tgt}' уже пуст. кто-то удалил содержимое раньше тебя.`,"t-warn"); return; }
+    say(`removed '${tgt}'. но в треде уже успели заскринить.`,"t-ok");
+  },
+  whoami(){ sayPre("admin_она_решает\nrole:   root (но не в sudoers)\ngroups: подруги, коливинг, тбилисский-твиттер"); },
+  uptime(){
+    const d=new Date(), l=(state.drama/100);
+    say(` ${d.toLocaleTimeString("ru-RU")} up 13 days since last commit, 1 user, load average: ${l.toFixed(2)}, ${Math.min(1,l+.07).toFixed(2)}, 1.00 (drama)`);
+  },
+  date(){ say(`${new Date().toLocaleString("ru-RU")} — он так и не ответил.`); },
+  top(){
+    sayPre(`  PID USER    %CPU  %MEM  COMMAND
+    1 admin   98.0  12.4  overthinking
+  413 admin    0.0  99.9  жду_ответа
+  777 admin   34.2   8.1  doomscroll --tbilisi-twitter
+ 1312 admin   12.5   4.0  google "аренда лиссабон"
+ 2022 admin    7.7  61.3  бывший <zombie>
+ 4040 admin    0.1   0.1  здравый_смысл (sleeping)`);
+  },
+  neofetch(){
+    const logo=["  ██████╗ ","  ██╔══██╗","  ██████╔╝","  ██╔══██╗","  ██║  ██║","  ╚═╝  ╚═╝"];
+    const info=[
+      `<b class="t-ok">admin_она_решает</b>@<b class="t-acc">tbilisi-1</b>`, "---------------------------",
+      `<span class="t-acc">OS:</span> RelationOps™ v0.1.0-doomed`, `<span class="t-acc">Host:</span> tbilisi-1 (Сололаки)`,
+      `<span class="t-acc">Uptime:</span> с момента релокейта`, `<span class="t-acc">Shell:</span> relctl`,
+      `<span class="t-acc">CPU:</span> overthinking (12 ядер, все заняты)`, `<span class="t-acc">Memory:</span> бывший (не освобождена)`,
+      `<span class="t-acc">GPU:</span> фильтры в сторис`, `<span class="t-acc">Theme:</span> dark (как и юмор)`
+    ];
+    termAppend({cls:"pre",html:info.map((s,i)=>`<span class="t-grad">${logo[i]||"          "}</span>  ${s}`).join("\n")});
+  },
+  history(){ sayPre(term.history.map((h,i)=>`${String(i+1).padStart(4)}  ${h}`).join("\n")||"(пусто)"); },
+  exit(){ say("logout","t-dim"); say("Выхода нет. Есть только релокейт.","t-warn"); },
+  vim(){ say("Ты в vim. Это навсегда.","t-warn"); say("Как выйти из vim? Так же, как из situationship: никак.","t-dim"); },
+  nano(){ say("nano? ладно. ^X всё равно не поможет, ты ему напишешь.","t-dim"); },
+  emacs(){ say("emacs загружается… ETA: после следующего визарана","t-dim"); },
+  npm(args){
+    if(/^(i|install|add)$/.test(args[0]||"")){
+      const pkg=args[1]||"love";
+      sayPre(`npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR! peer trust@"^2.0.0" required by ${pkg}@latest
+npm ERR! found: trust@0.1.0-doomed
+npm ERR! Fix the upstream dependency conflict, or retry with --force (не надо)`,"t-err");
+    } else say("npm WARN deprecated всё-ещё-женат@1.0.0: это сложно","t-warn");
+  },
+  make(args){ say(args[0]?`make: *** No rule to make target '${args[0]}'.  Stop.`:"make: *** No targets specified. Stop. (как и в отношениях)","t-err"); },
+  ssh(args){ say(`ssh: connect to host ${args[0]||"her"} port 22: Connection refused (тебя заблокировали)`,"t-err"); },
+  docker(){ say("Cannot connect to the Docker daemon. Он уехал на Бали.","t-err"); },
+  man(args){ say(`Нет справочной страницы для «${args[0]||"жизни"}». Спроси в треде — там все эксперты.`,"t-dim"); },
+  echo(args){
+    const env={LOVE:"undefined",TRUST:"",DRAMA_LEVEL:String(state.drama),DRAMA:String(state.drama),USER:"admin_она_решает",HOME:"/home/tbilisi (временно)"};
+    say(args.map(a=>a.startsWith("$")?(env[a.slice(1).toUpperCase()]??""):a).join(" "));
+  }
+});
+// алиасы
+Object.assign(CMDS,{vi:CMDS.vim,nvim:CMDS.vim,logout:CMDS.exit,quit:CMDS.exit,"помощь":CMDS.help,
+  "привет":()=>say("доставлено ✓✓ · прочитано · ответа нет","t-dim"),
+  hi:()=>say("доставлено ✓✓ · прочитано · ответа нет","t-dim")});
+
+function termExec(raw){
+  const line=raw.trim();
+  termAppend({cls:"",html:`${PROMPT_HTML} ${esc(line)}`});
+  if(line){
+    term.history.push(line);
+    const [cmd,...args]=line.split(/\s+/);
+    const fn=CMDS[cmd.toLowerCase()];
+    try{
+      if(fn) fn(args);
+      else { say(`bash: ${cmd}: command not found`,"t-err"); say("попробуй поговорить словами. или help.","t-dim"); }
+    }catch(err){ console.error(err); say("Segmentation fault (core dumped). даже терминал не выдержал.","t-err"); }
+  }
+  term.hIdx=term.history.length;
+  termScroll();
+}
+function termComplete(val){
+  const parts=val.split(" "), last=parts[parts.length-1], cmd=parts[0].toLowerCase();
+  const isRel=cmd==="relctl"||cmd==="kubectl", nicks=()=>state.candidates.map(c=>c.nick);
+  let pool=null;
+  if(parts.length===1) pool=Object.keys(CMDS).filter(k=>/^[a-z]/.test(k));
+  else if(last.startsWith("@")) pool=nicks();
+  else if(isRel && parts.length===2) pool=RELCTL_SUBS;
+  else if(isRel && parts[1]==="get" && parts.length===3) pool=RESOURCES;
+  else if(isRel && ["describe","logs","delete"].includes(parts[1])) pool=nicks();
+  else if(cmd==="git" && parts.length===2) pool=GIT_SUBS;
+  else if(["cat","rm","cd","vim","nano"].includes(cmd)) pool=FILES;
+  else if(cmd==="ping") pool=["lisbon","bali","yerevan","tbilisi"];
+  if(!pool) return val;
+  const m=pool.filter(p=>p.toLowerCase().startsWith(last.toLowerCase()));
+  if(!m.length) return val;
+  if(m.length===1){ parts[parts.length-1]=m[0]; return parts.join(" ")+" "; }
+  // несколько вариантов: показать и дописать общий префикс
+  let pre=m[0];
+  m.forEach(x=>{ while(!x.toLowerCase().startsWith(pre.toLowerCase())) pre=pre.slice(0,-1); });
+  termAppend({cls:"",html:`${PROMPT_HTML} ${esc(val)}`});
+  say(m.join("   "),"t-dim"); termScroll();
+  if(pre.length>last.length) parts[parts.length-1]=pre;
+  return parts.join(" ");
+}
+function termKey(e){
+  const inp=e.target;
+  if(e.key==="Enter"){ e.preventDefault(); const v=inp.value; inp.value=""; termExec(v); return; }
+  if(e.key==="ArrowUp"){ e.preventDefault(); if(term.hIdx>0){ term.hIdx--; inp.value=term.history[term.hIdx]; } return; }
+  if(e.key==="ArrowDown"){
+    e.preventDefault();
+    if(term.hIdx<term.history.length-1){ term.hIdx++; inp.value=term.history[term.hIdx]; }
+    else { term.hIdx=term.history.length; inp.value=""; }
+    return;
+  }
+  // Tab в пустой строке оставляем браузеру — чтобы можно было уйти фокусом из терминала
+  if(e.key==="Tab" && inp.value){ e.preventDefault(); inp.value=termComplete(inp.value); return; }
+  if(e.ctrlKey && /^[lLдД]$/.test(e.key)){ e.preventDefault(); termClear(); return; }
+  if(e.ctrlKey && /^[cCсС]$/.test(e.key) && inp.selectionStart===inp.selectionEnd){
+    e.preventDefault(); termAppend({cls:"",html:`${PROMPT_HTML} ${esc(inp.value)}<span class="t-dim">^C</span>`}); inp.value=""; termScroll();
+  }
+}
+function renderTerminal(){
+  const el=$("#tab-terminal");
+  if(!term.booted){
+    term.booted=true;
+    termAppend({cls:"",html:`<span class="t-grad">RelationOps™ shell v0.1.0-doomed (tty1)</span>`});
+    say("Last login: вчера в 02:14 с iPhone (он печатал…)","t-dim");
+    say("Введи help. Tab — автодополнение, ↑↓ — история, Ctrl+L — очистить.","t-dim");
+  }
+  el.innerHTML=`
+  <div class="page-head"><h1>Терминал</h1>
+    <div class="sub">relctl — CLI для управления тем, чем управлять не надо. Терминал настоящий, жизнь — нет.</div></div>
+  <div class="term">
+    <div class="term-bar"><i style="background:#F43F5E"></i><i style="background:#FBBF24"></i><i style="background:#A3E635"></i>
+      <span class="tt">admin_она_решает@tbilisi-1: ~ — relctl — 80×24</span></div>
+    <div class="term-body" id="termBody">
+      <div class="term-out" id="termOut">${term.lines.map(lineHTML).join("")}</div>
+      <div class="term-in">${PROMPT_HTML}<input id="termInput" type="text" autocomplete="off" autocapitalize="off"
+        autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Команда терминала"></div>
+    </div>
+  </div>
+  <div class="term-hints"><span class="caption">попробуй:</span>
+    ${TERM_HINTS.map(h=>`<button class="chip" data-act="termRun" data-id="${esc(h)}">${esc(h)}</button>`).join("")}
+  </div>`;
+  const inp=$("#termInput");
+  inp.addEventListener("keydown",termKey);
+  $("#termBody").addEventListener("click",()=>{ if(!String(getSelection())) inp.focus({preventScroll:true}); });
+  termScroll();
+  // go() потом фокусирует секцию — перехватываем фокус кадром позже; на тачах не открываем клавиатуру сами
+  if(!coarsePointer) requestAnimationFrame(()=>inp.focus({preventScroll:true}));
+}
+
+/* ============================================================
+   §6.10  РЕВЬЮ — претенденты как pull request'ы
+   ============================================================ */
+const candById = id => state.candidates.find(c=>c.id===id);
+const nowHMS = () => new Date().toLocaleTimeString("ru-RU");
+function genChecks(c){
+  const base=[
+    c.vuln.un>0 ? {s:"fail",n:"security",d:`${c.vuln.un} unpatched (см. Advisories)`} : {s:"pass",n:"security",d:"0 unpatched (подозрительно)"},
+    c.reloc.pct>60 ? {s:"warn",n:"reloc-risk",d:`${c.reloc.city}: ${c.reloc.pct}%, пакует чемодан`} : {s:"pass",n:"reloc-risk",d:`${c.reloc.city}: ${c.reloc.pct}%, пока сидит`}
+  ];
+  return shuffle(base.concat(sampleMany(DATA.prChecks,2+rnd(2))));
+}
+function genPR(c){
+  state.prSeq+=1+rnd(4);
+  return {num:state.prSeq, cand:c.id, title:sample(DATA.prTitles), branch:sample(DATA.prBranches),
+    commits:1+rnd(9), labels:sampleMany(DATA.prLabels,1+rnd(2)), diff:sampleMany(DATA.bioDiffs,3+rnd(2)),
+    checks:genChecks(c), reviewers:sampleMany(DATA.prReviewers,2)};
+}
+function fillDeck(){ state.prs=shuffle(liveCands().filter(c=>!c.merged)).map(genPR); }
+function livePRs(){ return state.prs.filter(p=>{ const c=candById(p.cand); return c && !c.blocked; }); }
+function prCard(pr,pos){
+  const c=candById(pr.cand);
+  const adds=pr.diff.filter(d=>d.add).length, dels=pr.diff.filter(d=>d.del).length;
+  const fails=pr.checks.filter(k=>k.s==="fail").length, runs=pr.checks.filter(k=>k.s==="run").length;
+  const sum = fails ? `<span class="s-fail">✕ Some checks were not successful</span>`
+    : runs ? `<span class="s-warn">● Some checks haven't completed yet</span>`
+    : `<span class="s-pass">✓ All checks have passed</span>`;
+  const ico={pass:"✓",fail:"✕",warn:"!",run:"●"};
+  return `<div class="card prc ${pos}" data-pr="${pr.num}" ${pos==="top"?"":'aria-hidden="true"'}>
+    ${pos==="top"?`<div class="stamp ok" data-st="approve">APPROVE</div><div class="stamp no" data-st="changes">CHANGES<br>REQUESTED</div><div class="stamp dup" data-st="dup">DUPLICATE</div>`:""}
+    <div class="pr-head"><span class="badge ok">● Open</span><span class="mono pr-num">#${pr.num}</span>
+      ${pr.labels.map(l=>`<span class="badge ${l.k}">${esc(l.t)}</span>`).join("")}</div>
+    <div class="pr-title">${esc(pr.title)}</div>
+    <div class="pr-meta">
+      <div class="avatar" style="background:${avatarGrad(c.nick.length)};width:22px;height:22px;border-radius:6px;font-size:9px">${initials(c.nick)}</div>
+      <span><b class="mono">${esc(c.nick)}</b> хочет смёржить ${pr.commits} ${plural(pr.commits,"коммит","коммита","коммитов")} в <code>main</code> из <code>${esc(pr.branch)}</code></span>
+    </div>
+    <div class="diff">
+      <div class="diff-h"><span>bio.md</span><span><span class="a">+${adds}</span> <span class="d">−${dels}</span></span></div>
+      ${pr.diff.map(d=>(d.del?`<div class="dl del"><span class="sg">-</span><span>${esc(d.del)}</span></div>`:"")
+        +`<div class="dl add"><span class="sg">+</span><span>${esc(d.add)}</span></div>`).join("")}
+    </div>
+    <div class="checks">
+      <div class="ck-sum">${sum} <span class="caption">· ${pr.checks.length-fails-runs}/${pr.checks.length}</span></div>
+      ${pr.checks.map(k=>`<div class="ck"><span class="ci s-${k.s}">${ico[k.s]}</span><span class="cn">${esc(k.n)}</span><span class="cd">${esc(k.d)}</span></div>`).join("")}
+    </div>
+    <div class="caption">Reviewers: ${pr.reviewers.map(r=>`<span class="mono">${esc(r.n)}</span> — ${esc(r.v)}`).join(" · ")}</div>
+  </div>`;
+}
+function renderReview(){
+  const el=$("#tab-review");
+  el.innerHTML=`
+  <div class="page-head"><h1>Ревью претендентов</h1>
+    <div class="sub">Каждый претендент — pull request в твою жизнь. Свайп вправо — approve, влево — request changes.</div></div>
+  <div class="chips" id="prStats" style="margin-bottom:14px"></div>
+  <div class="review-grid">
+    <div>
+      <div class="deck-wrap"><div class="deck" id="deck"></div></div>
+      <div class="deck-actions" id="deckActs">
+        <button class="btn danger" data-act="prChanges">✕ Request changes</button>
+        <button class="btn" data-act="prDup">⧉ Дубликат</button>
+        <button class="btn primary" data-act="prApprove">✓ Approve & merge</button>
+      </div>
+      <div class="caption" style="text-align:center;margin-top:8px">← → на клавиатуре · D — закрыть как дубликат</div>
+    </div>
+    <div class="card">
+      <h3>Activity</h3>
+      <div class="caption">Avg time to first review: 3 сек (в Тбилиси так принято)</div>
+      <div class="pr-log" id="prLog"></div>
+    </div>
+  </div>`;
+  renderDeck();
+}
+function renderDeck(){
+  const deck=$("#deck"); if(!deck) return;
+  state.prs=livePRs();
+  const top3=state.prs.slice(0,3);
+  deck.innerHTML = top3.length
+    ? top3.map((p,i)=>prCard(p,["top","n1","n2"][i])).join("")
+    : `<div class="card deck-empty"><div class="big-ic">📭</div><h3>Inbox zero</h3>
+        <div class="muted">Все претенденты отревьюены. Новые PR появятся после следующего визарана.</div>
+        <button class="btn primary" data-act="prFetch">↻ git fetch — подтянуть новые PR</button></div>`;
+  if(top3.length) bindSwipe($(".prc.top",deck));
+  $$("#deckActs .btn").forEach(b=>b.disabled=!top3.length);
+  renderPrStats(); renderPrLog(); refreshNavCounts();
+}
+function renderPrStats(){
+  const el=$("#prStats"); if(!el) return; const s=state.prStats;
+  el.innerHTML=`<span class="badge accent">open: ${state.prs.length}</span>
+    <span class="badge ok">merged: ${s.merged}</span>
+    <span class="badge danger">changes requested: ${s.changes}</span>
+    <span class="badge warn">merge conflicts: ${s.conflict}</span>
+    <span class="badge neutral">дубликаты: ${s.dup}</span>`;
+}
+function prLogPush(text,kind=""){ state.prLog.unshift({t:nowHMS(),text,kind}); if(state.prLog.length>50) state.prLog.pop(); }
+function renderPrLog(){
+  const el=$("#prLog"); if(!el) return;
+  el.innerHTML = state.prLog.length
+    ? state.prLog.map(a=>`<div class="alert-row"><span class="t">${a.t}</span><span class="${a.kind?"t-"+a.kind:""}">${esc(a.text)}</span></div>`).join("")
+    : `<div class="caption muted">Пока пусто. Свайпни первого.</div>`;
+}
+function bindSwipe(card){
+  if(!card) return;
+  const stOk=$('[data-st="approve"]',card), stNo=$('[data-st="changes"]',card);
+  let sx=0, sy=0, dx=0, dragging=false;
+  card.addEventListener("pointerdown",e=>{
+    if(state.prBusy || e.button>0) return;
+    dragging=true; sx=e.clientX; sy=e.clientY; dx=0;
+    card.setPointerCapture(e.pointerId);
+    card.style.transition="none";
+  });
+  card.addEventListener("pointermove",e=>{
+    if(!dragging) return;
+    dx=e.clientX-sx;
+    card.style.transform=`translate(${dx}px,${(e.clientY-sy)*.2}px) rotate(${dx/16}deg)`;
+    const a=Math.min(1,Math.abs(dx)/110);
+    stOk.style.opacity=dx>0?a:0; stNo.style.opacity=dx<0?a:0;
+  });
+  const end=()=>{
+    if(!dragging) return; dragging=false;
+    card.style.transition="";
+    const th=Math.min(110,card.offsetWidth*.3);
+    if(dx>th) return prDecide("approve");
+    if(dx<-th) return prDecide("changes");
+    card.style.transform=""; stOk.style.opacity=0; stNo.style.opacity=0;
+  };
+  card.addEventListener("pointerup",end);
+  card.addEventListener("pointercancel",end);
+}
+function prDecide(kind){
+  const deck=$("#deck"), card=deck&&$(".prc.top",deck), pr=state.prs[0];
+  if(state.prBusy||!card||!pr) return;
+  state.prBusy=true;
+  const st=$(`[data-st="${kind}"]`,card); if(st) st.style.opacity="1";
+  const dir=kind==="approve"?1:kind==="changes"?-1:0;
+  card.style.transition="transform .38s ease-in, opacity .3s ease-in .08s";
+  card.style.transform = dir ? `translate(${dir*(deck.offsetWidth+160)}px,40px) rotate(${dir*22}deg)` : "translateY(-30px) scale(.9)";
+  card.style.opacity="0";
+  const n1=$(".prc.n1",deck), n2=$(".prc.n2",deck);
+  if(n1) n1.classList.add("promote");
+  if(n2){ n2.classList.remove("n2"); n2.classList.add("n1"); }
+  setTimeout(()=>{ state.prs.shift(); prOutcome(kind,pr); state.prBusy=false; renderDeck(); }, reduceMotion?0:380);
+}
+function prOutcome(kind,pr){
+  const c=candById(pr.cand), nick=c?c.nick:"???";
+  if(kind==="approve"){
+    const o=sample(DATA.mergeOutcomes);
+    if(o.merged){ c.merged=true; state.prStats.merged++; }
+    if(o.conflict) state.prStats.conflict++;
+    toast(o.t,o.b,o.k);
+    prLogPush(`#${pr.num} ${nick}: ${o.log}`, o.k==="danger"?"err":o.k);
+    pushAlert(`PR #${pr.num} (${nick}): ${o.log}`, o.k==="danger"?"danger":o.k==="ok"?"ok":"");
+  } else if(kind==="changes"){
+    state.prStats.changes++;
+    const cm=sample(DATA.reviewComments);
+    toast("Changes requested",cm,"warn");
+    prLogPush(`#${pr.num} ${nick}: requested changes — ${cm}`,"warn");
+    // половина возвращается с «фиксами» — они всегда возвращаются
+    if(Math.random()<.5){
+      const again=genPR(c); again.title=sample(DATA.prFixTitles);
+      state.prs.push(again);
+      prLogPush(`#${again.num} ${nick} запушил «фиксы» и снова в очереди`,"dim");
+    }
+  } else {
+    state.prStats.dup++;
+    const ref=Math.max(1,pr.num-(5+rnd(90)));
+    toast(`Закрыт как дубликат #${ref}`,sample(DATA.dupReasons));
+    prLogPush(`#${pr.num} ${nick}: closed as duplicate of #${ref}`,"dim");
+  }
+}
+document.addEventListener("keydown",e=>{
+  if(state.activeTab!=="review" || e.altKey || e.ctrlKey || e.metaKey) return;
+  if(e.target.closest && e.target.closest("input,select,textarea")) return;
+  if($("#modal-root").classList.contains("open")) return;
+  if(e.key==="ArrowRight"){ e.preventDefault(); prDecide("approve"); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); prDecide("changes"); }
+  else if(/^[dDвВ]$/.test(e.key)) prDecide("dup");
+});
+
+/* ============================================================
+   ГЭГ: заголовок вкладки, пока админа нет
+   ============================================================ */
+const BASE_TITLE=document.title;
+const favEl=$("#favicon"), BASE_FAV=favEl?favEl.getAttribute("href"):"";
+const AWAY_FAV=BASE_FAV.replace("</svg>","<circle cx='25' cy='7' r='6.5' fill='%23F43F5E' stroke='%230B0614' stroke-width='1.5'/></svg>");
+let awayTimer=null, awaySince=0;
+function awayTitles(){
+  const live=liveCands(), nick=live.length?sample(live).nick:"@кто-то", q=state.queue;
+  return shuffle(["(1) ты спишь?","вернись 🥺",`${nick} онлайн`,`${nick} печатает…`,
+    `(${q}) ${plural(q,"новый претендент","новых претендента","новых претендентов")}`,
+    "(1) «нам надо поговорить»",`⚠ drama-level ${state.drama}/100`,"ты прочитала?","(2) лайк на сторис 2019 года"]);
+}
+function awayNews(){
+  const live=liveCands(), nick=live.length?sample(live).nick:makeNick();
+  return sample([`${nick} уехал в Лиссабон`,`${nick} написал «ты спишь?» и удалил`,
+    `стоимость свидания выросла до ₾${state.datePrice}`,"в коливинге сменили пароль от вайфая",
+    "DAO стирки проголосовало без тебя",`${nick} запивотил стартап`,"тебя назначили главным персонажем дня"]);
+}
+const fmtAway = s => s<60?`${s} сек`:s<3600?`${Math.round(s/60)} мин`:`${Math.round(s/3600)} ч`;
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    awaySince=Date.now();
+    const pool=awayTitles(); let i=0;
+    const flip=()=>{ document.title=pool[i++%pool.length]; };
+    flip(); clearInterval(awayTimer); awayTimer=setInterval(flip,2500);
+    if(favEl) favEl.setAttribute("href",AWAY_FAV);
+    return;
+  }
+  clearInterval(awayTimer); awayTimer=null;
+  document.title=BASE_TITLE;
+  if(favEl) favEl.setAttribute("href",BASE_FAV);
+  const sec=Math.round((Date.now()-awaySince)/1000);
+  if(awaySince && sec>=5){
+    const news=awayNews();
+    toast("С возвращением",`Пока тебя не было ${fmtAway(sec)}: ${news}.`,"warn");
+    pushAlert(`пока админа не было: ${news}`);
+  }
+});
+
+/* ============================================================
    ACTIONS — делегирование
    ============================================================ */
 document.addEventListener("click",e=>{
@@ -1291,6 +2118,24 @@ document.addEventListener("click",e=>{
       break;
     }
     case "plan": toast("Тариф","«"+id+"» — оплата дефицитом мужчин. Карта не нужна.","grad"); break;
+    case "termRun": {
+      termExec(id);
+      const inp=$("#termInput"); if(inp && !coarsePointer) inp.focus({preventScroll:true});
+      break;
+    }
+    case "prApprove": prDecide("approve"); break;
+    case "prChanges": prDecide("changes"); break;
+    case "prDup": prDecide("dup"); break;
+    case "prFetch": {
+      const base=state.candidates.length;
+      const fresh=genCandidates(3+rnd(3)).map((c,i)=>({...c,id:"c"+(base+i)}));
+      state.candidates.push(...fresh); state.orbit+=fresh.length;
+      state.prs=fresh.map(genPR);
+      prLogPush(`git fetch: ${fresh.length} ${plural(fresh.length,"новый PR","новых PR","новых PR")} прилетели из Еревана`,"ok");
+      toast("git fetch",`Подтянуто новых PR: ${fresh.length}. Визаран прошёл успешно.`,"ok");
+      pushAlert(`git fetch: ${fresh.length} новых претендентов вернулись с визарана`,"ok");
+      renderDeck(); syncCounters(); break;
+    }
   }
 });
 
@@ -1308,8 +2153,9 @@ document.addEventListener("change",e=>{
 /* ============================================================
    НАВИГАЦИЯ
    ============================================================ */
-const renderers={dashboard:renderDashboard,candidates:renderCandidates,advisories:renderAdvisories,
-  infra:renderInfra,tickets:renderTickets,threads:renderThreads,polycule:renderPolycule,settings:renderSettings};
+const renderers={dashboard:renderDashboard,candidates:renderCandidates,review:renderReview,advisories:renderAdvisories,
+  infra:renderInfra,tickets:renderTickets,threads:renderThreads,polycule:renderPolycule,terminal:renderTerminal,
+  settings:renderSettings};
 function go(tab){
   state.activeTab=tab;
   $$(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
@@ -1329,6 +2175,7 @@ $("#scrim").addEventListener("click",()=>{ $("#app").classList.remove("nav-open"
 function refreshNavCounts(){
   $("#navCand").textContent=state.candidates.filter(c=>!c.blocked).length;
   $("#navAdv").textContent=state.advisories.filter(a=>a.status==="unpatched").length;
+  $("#navPr").textContent=livePRs().length;
 }
 
 /* ============================================================
@@ -1372,6 +2219,7 @@ function init(){
   state.tickets=genTickets();
   state.orbit=state.candidates.filter(c=>!c.blocked).length;
   state.queue=4+rnd(14);
+  fillDeck();
   buildThreads();
   state.poly=genPoly();
   // стартовые алерты
